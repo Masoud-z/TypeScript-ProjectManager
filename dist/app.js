@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 function validate(validatableInput) {
     let isValid = true;
+    console.log(validatableInput.value);
     if (validatableInput.required) {
         isValid = isValid && validatableInput.value.toString().trim().length !== 0;
     }
@@ -28,6 +29,7 @@ function validate(validatableInput) {
         typeof validatableInput.value === "number") {
         isValid = isValid && validatableInput.value <= validatableInput.max;
     }
+    return isValid;
 }
 // Auto bind decorator
 function autoBind(_, _2, descriptor) {
@@ -59,9 +61,24 @@ class ProjectInput {
         const enteredTitle = this.titleInputElement.value;
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
-        if (enteredTitle.trim().length === 0 ||
-            enteredDescription.trim().length === 0 ||
-            enteredPeople.trim().length === 0) {
+        const titleValidatable = {
+            value: enteredTitle,
+            required: true,
+        };
+        const descriptionValidatable = {
+            value: enteredDescription,
+            required: true,
+            minLength: 5,
+        };
+        const peopleValidatable = {
+            value: +enteredPeople,
+            required: true,
+            min: 1,
+            max: 5,
+        };
+        if (!validate(titleValidatable) ||
+            !validate(descriptionValidatable) ||
+            !validate(peopleValidatable)) {
             alert("Invalid input, please try again!");
             return;
         }
@@ -72,15 +89,15 @@ class ProjectInput {
     clearInputs() {
         this.titleInputElement.value = "";
         this.descriptionInputElement.value = "";
-        this.titleInputElement.value = "";
+        this.peopleInputElement.value = "";
     }
     submitHandler(event) {
         event.preventDefault();
         const userInput = this.gatherUserInput();
         if (Array.isArray(userInput)) {
             const [title, desc, people] = userInput;
-            console.log(title, desc, people);
-            this.clearInputs;
+            // console.log(title, desc, people);
+            this.clearInputs();
         }
     }
     configure() {

@@ -10,6 +10,7 @@ interface Validatable {
 
 function validate(validatableInput: Validatable) {
   let isValid = true;
+  console.log(validatableInput.value);
   if (validatableInput.required) {
     isValid = isValid && validatableInput.value.toString().trim().length !== 0;
   }
@@ -39,6 +40,8 @@ function validate(validatableInput: Validatable) {
   ) {
     isValid = isValid && validatableInput.value <= validatableInput.max;
   }
+
+  return isValid;
 }
 
 // Auto bind decorator
@@ -95,12 +98,26 @@ class ProjectInput {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
- 
+    const titleValidatable: Validatable = {
+      value: enteredTitle,
+      required: true,
+    };
+    const descriptionValidatable: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+    const peopleValidatable: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
 
     if (
-      enteredTitle.trim().length === 0 ||
-      enteredDescription.trim().length === 0 ||
-      enteredPeople.trim().length === 0
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable)
     ) {
       alert("Invalid input, please try again!");
       return;
@@ -112,7 +129,7 @@ class ProjectInput {
   private clearInputs() {
     this.titleInputElement.value = "";
     this.descriptionInputElement.value = "";
-    this.titleInputElement.value = "";
+    this.peopleInputElement.value = "";
   }
 
   @autoBind
@@ -121,8 +138,8 @@ class ProjectInput {
     const userInput = this.gatherUserInput();
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput;
-      console.log(title, desc, people);
-      this.clearInputs;
+      // console.log(title, desc, people);
+      this.clearInputs();
     }
   }
 
